@@ -118,7 +118,7 @@ typedef struct{
 } select_table;
 
 struct file_operations {
-	int (*lseek) (struct inode *, struct file *, off_t, int);
+	int (*lseek) (struct inode *, struct file *, int, int);
 	int (*read) (struct inode *, struct file *, char *, int);
 	int (*write) (struct inode *, struct file *, const char *, int);
 	int (*readdir) (struct inode *, struct file *, void *, filldir_t);
@@ -178,7 +178,7 @@ __le32 inode; // 文件入口的inode号，0表示该项未使用
 __le16 rec_len; // 目录项长度
 __u8 name_len; // 文件名包含的字符数
 __u8 file_type; // 文件类型
-char name[255]; // 文件名
+char name[64]; // 文件名
 };   
 
 struct fs_struct {

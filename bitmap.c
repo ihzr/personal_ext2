@@ -65,15 +65,15 @@ int set_bitmap(unsigned int  *bitmap,int size, int block_num, int flag){
 	int index = block_num/32;
 	int offset = block_num%32;
 	if(flag==1){
-		//printf("%d\t%#X\n",block_num,bitmap[index]);
+		printf("%d\t%#X\n",block_num,bitmap[index]);
 		bitmap[index] |= (1<<(31-offset));
-		//printf("%d\t%#X\n",block_num,bitmap[index]);
+		printf("%d\t%#X\n",block_num,bitmap[index]);
 		return 1;
 	}
 	else {
-		//printf("%d\t%#X\n",block_num,bitmap[index]);
+		printf("%d\t%#X\n",block_num,bitmap[index]);
 		bitmap[index] &= (~(1<<(31-offset)));
-		//printf("%d\t%#X\n",block_num,bitmap[index]);
+		printf("%d\t%#X\n",block_num,bitmap[index]);
 		return 1;
 	}
 }
@@ -86,7 +86,7 @@ int lookup_bitmap(unsigned int *bitmap, int size){
 		int j=0;
 		for(;j<=31;j++){
 			if(!((bitmap[i]<<j) & mask)){
-				//printf("bitmap[%d]:%#X\n",i,bitmap[i]);
+				printf("bitmap[%d]:%#X\n",i,bitmap[i]);
 				return i*32+j;
 			}
 		}
@@ -170,7 +170,7 @@ int free_block(int block_num){
 	/*同步超级块*/	
 	get_superblock_data(&sb);
 	sb.s_free_blocks_count++;
-	//printf("free_block:sb.s_free_blocks_count=%d\n",sb.s_free_blocks_count);
+	printf("free_block:sb.s_free_blocks_count=%d\n",sb.s_free_blocks_count);
 	write_superblock_data(&sb);
 	return 1;
 }
@@ -185,7 +185,7 @@ int new_block(){
 	/*同步超级块*/	
 	get_superblock_data(&sb);
 	sb.s_free_blocks_count--;
-	//printf("new_block:sb.s_free_blocks_count=%d\n",sb.s_free_blocks_count);
+	printf("new_block:sb.s_free_blocks_count=%d\n",sb.s_free_blocks_count);
 	write_superblock_data(&sb);
 	return block_num;
 }
@@ -198,7 +198,7 @@ int free_inode(int inode_num){
 	/*同步超级块*/	
 	get_superblock_data(&sb);
 	sb.s_free_inodes_count++;
-	//printf("free_inode:sb.s_free_inodes_count=%d\n",sb.s_free_inodes_count);
+	printf("free_inode:sb.s_free_inodes_count=%d\n",sb.s_free_inodes_count);
 	write_superblock_data(&sb);
 	return 1;
 }
@@ -213,7 +213,7 @@ int new_inode(){
 	/*同步超级块*/	
 	get_superblock_data(&sb);
 	sb.s_free_inodes_count--;
-	//printf("free_inode:sb.s_free_inodes_count=%d\n",sb.s_free_inodes_count);
+	printf("free_inode:sb.s_free_inodes_count=%d\n",sb.s_free_inodes_count);
 	write_superblock_data(&sb);
 	return inode_num;
 }
