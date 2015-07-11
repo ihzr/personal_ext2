@@ -62,6 +62,8 @@ int my_write(struct inode* inode,struct file* file,const char* buffer,int count)
 /*由文件名字得到文件的inode节点,如果成功解析则返回1,且相应节点数据写入m_inode中，解析失败则返回-1*/
 int name_to_inode(char *path,struct inode *m_inode);
 
+/*../mkfs_ext2.c*/
+void mkfs_ext2();
 
 /*../sys_call.c*/
 extern struct task_struct task_struct;
@@ -72,6 +74,13 @@ extern struct files_struct files_struct;
 extern struct file sys_file[255];
 extern struct inode sys_inode[255];
 extern struct file_operations file_operations;
-
+void init();
+int sys_open(char* pass,int flag);
+int sys_close(int fd);
+int sys_write(int fd,char *buffer,int count);
+int sys_read(int fd,char *buffer,int count);
+int sys_lseek(int fd,int off,int flag);
+int sys_create(const char *name, int len, int mode);
+int sys_mkdir(const char *name, int len, int mode);
 
 #endif

@@ -115,8 +115,40 @@ int sys_lseek(int fd,int off,int flag){
 	return my_lseek(files_struct.fd[fd]->f_inode,files_struct.fd[fd],off,flag);
 }
 
-int sys_create(const char *name, int len, int mode, struct inode ** res_inode){
-	return create(&root,name,len,mode,res_inode);
+int sys_create(const char *name, int len, int mode){
+	int free_sys_inode;
+   	int free_sys_file;
+	int free_user_file;
+	int i;	
+	free_sys_inode=get_free_sys_inode();
+	if(free_sys_inode==-1){
+		perror("sys_inode[] full");
+		return -1;
+	}
+	struct inode* temp_inode;
+	temp_inode=sys_inode+free_sys_inode;
+	create(&root,name,len,mode,&temp_inode);
+	//如果该inode存在，则只保留一个
+	for(i=0;i<free_sys_inode;i++){
+		if(sys_inode[i].i_number==sys_inode[free_sys_inode].i_number){
+			sys_inode[free_sys_inode].i_number=0;
+			free_sys_inode=i;		
+		}
+	}
+	free_sys_file=get_free_sys_file();
+	if(free_sys_file==-1){
+		perror("sys_file[] full");
+		return -1;
+	}
+	sys_file[free_sys_file].f_inode=sys_inode+free_sys_inode;
+	sys_file[free_sys_file].f_op=&file_operations;
+	free_user_file=get_free_user_file();
+	if(free_user_file==-1){
+		perror("user file full");
+		return -1;
+	}
+	files_struct.fd[free_user_file]=sys_file+free_sys_file;
+	return free_user_file;
 }
 
 int sys_mkdir(const char *name, int len, int mode){

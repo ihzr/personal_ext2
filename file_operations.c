@@ -169,7 +169,8 @@ int my_write(struct inode* inode,struct file* file,const char* buffer,int count)
 	free(my_buffer);
 	file->f_pos=num_of_write;
 	inode->ext2_inode.i_size=num_of_write;
-	inode->ext2_inode.i_blocks=i;
+	inode->ext2_inode.i_blocks=j;
+	write_inode_data(inode->i_number,inode);
 	return count;
 }
 /*int main(){
