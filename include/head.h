@@ -58,6 +58,10 @@ int my_read(struct inode *inode,struct file *file,char *buffer,int count);
 int my_lseek(struct inode* inode,struct file* file,int off,int flag);
 int my_write(struct inode* inode,struct file* file,const char* buffer,int count);
 
+/*../namei.c*/
+/*由文件名字得到文件的inode节点,如果成功解析则返回1,且相应节点数据写入m_inode中，解析失败则返回-1*/
+int name_to_inode(char *path,struct inode *m_inode);
+
 
 /*../sys_call.c*/
 extern struct task_struct task_struct;
@@ -68,5 +72,6 @@ extern struct files_struct files_struct;
 extern struct file sys_file[255];
 extern struct inode sys_inode[255];
 extern struct file_operations file_operations;
+
 
 #endif

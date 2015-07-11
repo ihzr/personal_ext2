@@ -50,7 +50,7 @@ int write_block_data(unsigned int index,const void *buffer){
 }
 
 /*取ext2_inode中的数据，index为ext2_inode的磁盘编号，*/
-int get_inode_data(int index, struct inode *m_inode){
+int get_inode_data(unsigned int index, void *m_inode){
 	int fd;
 	int file_location=GUIDE_SIZE+SUPER_SIZE+INODE_BITMAP_SIZE+
 		BLOCK_BITMAP_SIZE+INODE_SIZE*index;
@@ -64,12 +64,13 @@ int get_inode_data(int index, struct inode *m_inode){
 		exit(EXIT_FAILURE);
 	}
 	int num = read(fd,m_inode,INODE_SIZE);
+	((struct inode*)m_inode)->i_number = index;
 	close(fd);
 	return num;
 }
 
 /*向inode中写入数据，index为inode的磁盘编号*/
-int write_inode_data(int index, struct inode *m_inode ){
+int write_inode_data(unsigned int index, void *m_inode ){
 	int fd;
 	int file_location=GUIDE_SIZE+SUPER_SIZE+INODE_BITMAP_SIZE+
 		BLOCK_BITMAP_SIZE+INODE_SIZE*index;
@@ -86,7 +87,6 @@ int write_inode_data(int index, struct inode *m_inode ){
 	close(fd);
 	return num;
 }
-
 /*int main(){
 	//char *buffer="hello world";
 	char df[1024];

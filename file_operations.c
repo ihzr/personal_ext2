@@ -152,9 +152,10 @@ int my_write(struct inode* inode,struct file* file,const char* buffer,int count)
 	for(i=0;i<count;i++){
 		my_buffer[i+file->f_pos]=buffer[i];
 	}
-	printf("ext2_inode.i_blocks %d\n",inode->ext2_inode.i_blocks);
+	//printf("file_operations.c write mybuffer %.10s\n",my_buffer);
+	//printf("ext2_inode.i_blocks %d\n",inode->ext2_inode.i_blocks);
 	for(i=0;i<inode->ext2_inode.i_blocks;i++){
-		printf("free_block %d\n",inode->ext2_inode.i_block[i]);
+		//printf("free_block %d\n",inode->ext2_inode.i_block[i]);
 		free_block(inode->ext2_inode.i_block[i]);
 	}
 	unsigned int temp_block;

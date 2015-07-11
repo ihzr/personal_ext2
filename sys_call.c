@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 #include <limits.h>
 #include "./include/file.h"
 #include "./include/head.h"
@@ -48,7 +49,7 @@ int get_free_sys_inode(){
 	int i;
 	for(i=0;i<255;i++){
 		if(sys_inode[i].i_number==0)
-			return i
+			return i;
 	}
 	return -1;
 }
@@ -63,13 +64,22 @@ int get_free_user_file(){
 int sys_open(char* pass,int flag){
 	int free_sys_inode;
    	int free_sys_file;
-	int free_user_file;	
+	int free_user_file;
+	int i;	
 	free_sys_inode=get_free_sys_inode();
 	if(free_sys_inode==-1){
 		perror("sys_inode[] full");
 		return -1;
 	}
 	name_to_inode(pass,sys_inode+free_sys_inode);
+	
+	//如果该inode存在，则只保留一个
+	for(i=0;i<free_sys_inode;i++){
+		if(sys_inode[i].i_number==sys_inode[free_sys_inode].i_number){
+			sys_inode[free_sys_inode].i_number=0;
+			free_sys_inode=i;		
+		}
+	}
 	free_sys_file=get_free_sys_file();
 	if(free_sys_file==-1){
 		perror("sys_file[] full");
@@ -104,3 +114,23 @@ int sys_read(int fd,char *buffer,int count){
 int sys_lseek(int fd,int off,int flag){
 	return my_lseek(files_struct.fd[fd]->f_inode,files_struct.fd[fd],off,flag);
 }
+
+int sys_create(const char *name, int len, int mode, struct inode ** res_inode){
+	return create(&root,name,len,mode,res_inode);
+}
+
+int sys_mkdir(const char *name, int len, int mode){
+	return mkdir(&root,name,len,mode);
+}
+
+/*int main(){
+	//init();
+	char path[]="/test";
+	int fd=sys_open(path,0);
+	sys_write(fd,"hello world",12);
+	char buffer[20];
+	sys_lseek(fd,0,0);
+	sys_read(fd,buffer,12);
+	printf("%s\n",buffer);
+	return 0;
+}*/
