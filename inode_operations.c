@@ -211,3 +211,72 @@ int mkdir(struct inode *dir, const char *name, int len, int mode){
 	return -1;
 }
 
+
+int list(struct inode *dir){
+	if(dir->ext2_inode.i_block[0] != UINT_MAX){
+		perror("dir is a file!\n");
+		return -1;
+	} 
+	struct ext2_dir_entry_2 *pentry;
+	char buf[1024];
+	int num = BLOCK_SIZE/sizeof(struct ext2_dir_entry_2);
+	int i = 1;
+	while(i <= dir->ext2_inode.i_blocks){
+		get_block_data(dir->ext2_inode.i_block[i],buf);
+		pentry = (struct ext2_dir_entry_2*)buf;
+		int j = 0;
+		for(;j<num;j++,pentry++){
+			if(pentry->inode == 0) continue;
+			printf("%-24s\n",pentry->name);	
+		}
+		i++;
+	}
+	return 1;
+}
+
+int remove_file(struct inode *dir, const char *name){
+	/*判断目录是否有效*/
+	if(dir->ext2_inode.i_block[0] != UINT_MAX){
+		perror("inode_operations.c: remove_file error! current dir is a file!\n");
+		return -1;
+	}
+	/*判断名字是否有效*/
+	if(checkname(name) == -1){
+		perror("inode_operations.c: remove_file error! filename is illegal!\n");
+		return -1;
+	}
+	char buf[BLOCK_SIZE];
+	struct ext2_dir_entry_2 *pentry;
+	int dir_datablocks = dir->ext2_inode.i_blocks;/*数据块个数*/
+	int i = 1;
+	int j = 0;
+	int num = BLOCK_SIZE/sizeof(struct ext2_dir_entry_2);
+	while(i <= dir_datablocks){
+		/*取出目录节点中第i块逻辑块所在的物理块的数据，放入buf*/
+		get_block_data(dir->ext2_inode.i_block[i],buf);
+		pentry = (struct ext2_dir_entry_2 *)buf;
+		printf("inode_operations.c: check : dir_datablocks: %d\n",i);
+		/*比较每一项*/
+		while(j<num){
+			printf("inode_operations.c: check : entry: %d\n",j);
+			/*比较pentry->inode不为0的每一项*/
+			if(pentry->inode && !strcmp(pentry->name,name)){
+				if(free_inode(pentry->inode) == -1){
+					perror("节点释放失败!\n");
+					return -1;
+				};
+				/*清空该目录项*/
+				memset(pentry,'\0',sizeof(struct ext2_dir_entry_2));
+				/*写回磁盘，更新数据*/
+				write_block_data(dir->ext2_inode.i_block[i],buf);
+				return 1;
+			}
+			j++;
+			pentry++;
+		}
+		i++;
+	}
+	printf("no such file,please check your filename!\n");
+	return -1;
+}
+

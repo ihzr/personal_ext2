@@ -12,12 +12,9 @@
 int name_to_inode(char *path,struct inode *m_inode){
 	unsigned int cur_inode_num;
 	char *ptoken;
-	/*绝对路径,从根节点开始解析*/
-	
+	/*囧对路径,从根节点开始解析*/
 	if(*path == '/'){
-		
 		ptoken = strtok(path,"/");
-		//printf("OK\n");
 		cur_inode_num = 0;/*从根节点开始*/
 		while(ptoken != NULL){
 			//printf("%s\n",ptoken);
@@ -31,12 +28,21 @@ int name_to_inode(char *path,struct inode *m_inode){
 		return 1;
 	}
 	/*相对路径*/
-	else if(*path == '.' & *(path+1) == '/' || *path != '.' && *path != '/'){
-		
+	else if((*path == '.' & *(path+1) == '/') || (*path != '.' && *path != '/')){
+		ptoken = strtok(path,"/");
+		cur_inode_num = pwd.i_number;/*从当前节点开始*/
+		while(ptoken != NULL){
+			//printf("%s\n",ptoken);
+			if((cur_inode_num=namei(ptoken,cur_inode_num)) == -1){
+				printf("no such file or dir!\n");
+				return -1;
+			}
+			ptoken = strtok(NULL,"/");
+		}
+		get_inode_data(cur_inode_num,m_inode);
+		return 1;
 	}
 }
-
-
 /*寻找当前节点号中是否含有名字为name的项目，如果有则返回name项目的i节点号，没有则返回-1*/
 int namei(char *name, unsigned int cur_inode_num){
 	struct ext2_inode *current_inode;

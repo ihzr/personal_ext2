@@ -33,6 +33,9 @@ void init(){
 	root.ext2_inode.i_block[0]=UINT_MAX;
 	root.ext2_inode.i_block[1]=new_block();
 	root.ext2_inode.i_blocks=1;
+	pwd.ext2_inode.i_block[0]=root.ext2_inode.i_block[0];
+	pwd.ext2_inode.i_block[1]=root.ext2_inode.i_block[1];
+	pwd.ext2_inode.i_blocks=1;
 	write_inode_data(0,&root);
 	fs_struct.root=&root;
 	fs_struct.pwd=&pwd;
@@ -127,7 +130,7 @@ int sys_create(const char *name, int len, int mode){
 	}
 	struct inode* temp_inode;
 	temp_inode=sys_inode+free_sys_inode;
-	create(&root,name,len,mode,&temp_inode);
+	create(&pwd,name,len,mode,&temp_inode);
 	//如果该inode存在，则只保留一个
 	for(i=0;i<free_sys_inode;i++){
 		if(sys_inode[i].i_number==sys_inode[free_sys_inode].i_number){
@@ -152,7 +155,7 @@ int sys_create(const char *name, int len, int mode){
 }
 
 int sys_mkdir(const char *name, int len, int mode){
-	return mkdir(&root,name,len,mode);
+	return mkdir(&pwd,name,len,mode);
 }
 
 /*int main(){

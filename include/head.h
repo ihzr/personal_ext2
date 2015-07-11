@@ -50,6 +50,13 @@ int name_to_inode(char *path,struct inode *m_inode);
 int create(struct inode *dir, const char *name, int len, int mode, struct inode ** res_inode);
 /*目录创建函数，在dir中建立名字为name、名字长度为len，访问权限属性为mode的子目录*/
 int mkdir(struct inode *dir, const char *name, int len, int mode);
+/*在dir目录中删除名字为name的目录，且会递归删除其下的子目录及文件*/
+int remove_dir(struct inode *dir,const char *name);
+/*在dir目录中删除名字为name的文件,成功返回1,失败返回-1*/
+int remove_file(struct inode *dir, const char *name);
+/*在当前目录dir中打印所有的文件名字，成功返回1,失败返回-1*/
+int list(struct inode *dir);
+
 
 
 

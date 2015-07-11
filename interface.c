@@ -5,7 +5,7 @@
 #include"./include/head.h"
 
 void help(){
-	printf("1 创建文件\n2 创建文件夹\n3 打开文件\n4 写入文件\n5 读取文件\n6 关闭文件\nq 退出\n");
+	printf("1 创建文件\n2 创建文件夹\n3 打开文件\n4 写入文件\n5 读取文件\n6 关闭文件\n7 删除文件\n8 改变当前工作目录\nls 显示当前文件夹的内容\nq 退出\n");
 }
 int main(int argc,char *argv[]){
 	mkfs_ext2();
@@ -47,6 +47,19 @@ int main(int argc,char *argv[]){
 		}
 		else if(!strcmp(cmd,"6")){
 			sys_close(fd);
+		}
+		else if(!strcmp(cmd,"7")){
+			printf("输入删除文件名:\n");
+			scanf("%s",cmd);
+			remove_file(&pwd,cmd);
+		}
+		else if(!strcmp(cmd,"8")){
+			printf("输入改变的目标路径:\n");
+			scanf("%s",cmd);
+			name_to_inode(cmd,&pwd);
+		}
+		else if(!strcmp(cmd,"ls")){
+			list(&pwd);
 		}
 		else if(!strcmp(cmd,"q")){
 			break;
