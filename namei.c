@@ -29,7 +29,7 @@ int name_to_inode(char *path,struct inode *m_inode){
 	}
 	/*相对路径*/
 	else if((*path == '.' & *(path+1) == '/') || (*path != '.' && *path != '/')){
-		ptoken = strtok(path,"/");
+		ptoken = strtok(path,"./");
 		cur_inode_num = pwd.i_number;/*从当前节点开始*/
 		while(ptoken != NULL){
 			//printf("%s\n",ptoken);

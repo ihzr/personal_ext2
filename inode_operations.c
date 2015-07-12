@@ -255,10 +255,10 @@ int remove_file(struct inode *dir, const char *name){
 		/*取出目录节点中第i块逻辑块所在的物理块的数据，放入buf*/
 		get_block_data(dir->ext2_inode.i_block[i],buf);
 		pentry = (struct ext2_dir_entry_2 *)buf;
-		printf("inode_operations.c: check : dir_datablocks: %d\n",i);
+		//printf("inode_operations.c: check : dir_datablocks: %d\n",i);
 		/*比较每一项*/
 		while(j<num){
-			printf("inode_operations.c: check : entry: %d\n",j);
+			//printf("inode_operations.c: check : entry: %d\n",j);
 			/*比较pentry->inode不为0的每一项*/
 			if(pentry->inode && !strcmp(pentry->name,name)){
 				if(free_inode(pentry->inode) == -1){
